@@ -1,97 +1,22 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Lojilingo</title>
-
-<link rel="manifest" href="manifest.json">
-
-<meta name="theme-color" content="#f97316">
-
-<link rel="apple-touch-icon" href="icon-192.png">
-
-<style>
-body{
-    background:#0a0a0a;
-    color:white;
-    font-family:system-ui,sans-serif;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    height:100vh;
-    margin:0;
-    text-align:center;
-}
-.container{
-    max-width:400px;
-}
-button{
-    background:#f97316;
-    color:white;
-    border:none;
-    padding:14px 24px;
-    border-radius:10px;
-    cursor:pointer;
-    font-size:16px;
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lojilingo - Lojistik İngilizcesi Platformu</title>
+  
+  <!-- Hızlı Tarayıcı Yönlendirmesi (Meta Refresh) -->
+  <meta http-equiv="refresh" content="0; url=https://lojilingo-472717011839.europe-west2.run.app/">
+  
+  <!-- JavaScript ile Yedek Anında Yönlendirme -->
+  <script type="text/javascript">
+    window.location.replace("https://lojilingo-472717011839.europe-west2.run.app/");
+  </script>
 </head>
-<body>
-
-<div class="container">
-    <h1>Lojilingo</h1>
-
-    <p>
-        Lojilingo uygulamasını telefonunuza yükleyebilirsiniz.
-    </p>
-
-    <button id="installBtn" style="display:none;">
-        📲 Uygulamayı Yükle
-    </button>
-
-    <p style="margin-top:20px;">
-        <a href="https://lojilingo-472717011839.europe-west2.run.app/"
-           style="color:#f97316;">
-           Tarayıcıda Aç
-        </a>
-    </p>
-</div>
-
-<script>
-
-let deferredPrompt;
-
-window.addEventListener('beforeinstallprompt', (e) => {
-
-    e.preventDefault();
-
-    deferredPrompt = e;
-
-    document.getElementById('installBtn').style.display='inline-block';
-});
-
-document.getElementById('installBtn').addEventListener('click', async () => {
-
-    if(!deferredPrompt) return;
-
-    deferredPrompt.prompt();
-
-    await deferredPrompt.userChoice;
-
-    deferredPrompt = null;
-});
-
-if('serviceWorker' in navigator){
-    navigator.serviceWorker.register('service-worker.js');
-}
-
-setTimeout(()=>{
-    window.location.href="https://lojilingo-472717011839.europe-west2.run.app/";
-},3000);
-
-</script>
-
+<body style="background: #0a0a0a; color: #a3a3a3; font-family: system-ui, sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; text-align: center;">
+  <div>
+    <h2 style="color: #f97316;">Lojilingo'ya Yönlendiriliyorsunuz...</h2>
+    <p>Eğer yönlendirme gerçekleşmediyse <a href="https://lojilingo-472717011839.europe-west2.run.app/" style="color: #f97316; font-weight: bold; text-decoration: none;">buraya tıklayın</a>.</p>
+  </div>
 </body>
 </html>
