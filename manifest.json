@@ -1,0 +1,20 @@
+{
+  "name": "Lojilingo Uygulaması",
+  "short_name": "Lojilingo",
+  "start_url": "https://lojilingo-472717011839.europe-west2.run.app/?source=pwa",
+  "display": "standalone",
+  "background_color": "#09090b",
+  "theme_color": "#f97316",
+  "icons": [
+    {
+      "src": "https://lojilingo-472717011839.europe-west2.run.app/favicon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://lojilingo-472717011839.europe-west2.run.app/favicon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
