@@ -18,8 +18,8 @@
     <!-- Canonical Link -->
     <link rel="canonical" href="https://lojilingo.com/" />
     
-    <!-- PWA Manifest (inline olarak oluşturulacak) -->
-    <link rel="manifest" id="manifest-link" />
+    <!-- PWA Manifest (harici dosya) -->
+    <link rel="manifest" href="/manifest.json">
 
     <!-- Open Graph -->
     <meta property="og:type" content="website">
@@ -1078,45 +1078,14 @@
         }
 
         // ============================================================
-        // 2. PWA MANIFEST (inline) ve SERVICE WORKER KAYDI
+        // 2. PWA KURULUM MANTIĞI (Harici manifest.json ve sw.js kullanıyor)
         // ============================================================
         (function() {
-            // Manifest'i inline oluştur
-            const manifestData = {
-                name: "Lojilingo Akademi",
-                short_name: "Lojilingo",
-                description: "Profesyonel Lojistik İngilizcesi ve Yapay Zeka Destekli Akademi",
-                start_url: "/",
-                display: "standalone",
-                background_color: "#09090b",
-                theme_color: "#f97316",
-                orientation: "portrait-primary",
-                icons: [
-                    {
-                        src: "https://lojilingo-472717011839.europe-west2.run.app/favicon-192.png",
-                        sizes: "192x192",
-                        type: "image/png",
-                        purpose: "any maskable"
-                    },
-                    {
-                        src: "https://lojilingo-472717011839.europe-west2.run.app/favicon-512.png",
-                        sizes: "512x512",
-                        type: "image/png",
-                        purpose: "any maskable"
-                    }
-                ]
-            };
-
-            const manifestBlob = new Blob([JSON.stringify(manifestData)], { type: 'application/json' });
-            const manifestURL = URL.createObjectURL(manifestBlob);
-            document.getElementById('manifest-link').href = manifestURL;
-
-            // Service Worker kaydı (sw.js dosyası aynı dizinde olmalı)
+            // Service Worker kaydı
             if ('serviceWorker' in navigator) {
-                // Aşağıdaki satırı, sw.js dosyasını oluşturduktan sonra aktif edin.
-                // navigator.serviceWorker.register('sw.js');
-                // Şimdilik yorum satırında, kullanıcı sw.js'yi eklesin diye.
-                console.log('Service worker kaydı için sw.js dosyası oluşturun ve bu satırı aktif edin.');
+                navigator.serviceWorker.register('/sw.js')
+                    .then(() => console.log('Service Worker başarıyla kaydedildi.'))
+                    .catch(err => console.error('Service Worker kaydı başarısız:', err));
             }
 
             // PWA Kurulum Butonu
@@ -1125,40 +1094,58 @@
             const closeBtn = document.getElementById('pwa-close-btn');
             const banner = document.getElementById('pwa-install-banner');
 
+            // Banner'ı daha önce kapattıysak gösterme
             if (localStorage.getItem('pwa_banner_closed') === 'true') {
                 banner.classList.add('hidden');
             }
 
+            // Eğer uygulama zaten standalone modda açılmışsa banner'ı gizle ve hedef URL'ye yönlendir
+            if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+                banner.classList.add('hidden');
+                // Uygulama açıldığında doğrudan hedef URL'ye git
+                window.location.href = 'https://lojilingo-472717011839.europe-west2.run.app/?source=pwa';
+                return; // Yönlendirme yapıldığı için aşağıdaki kod çalışmaz
+            }
+
+            // beforeinstallprompt olayını yakala
             window.addEventListener('beforeinstallprompt', (e) => {
                 e.preventDefault();
                 deferredPrompt = e;
+                // Banner'ı göster (eğer kapatılmadıysa)
+                if (localStorage.getItem('pwa_banner_closed') !== 'true') {
+                    banner.classList.remove('hidden');
+                }
             });
 
-            installBtn.addEventListener('click', async (e) => {
+            // Yükle butonuna tıklama
+            installBtn.addEventListener('click', async () => {
                 if (deferredPrompt) {
-                    e.preventDefault();
+                    // Prompt'u göster
                     deferredPrompt.prompt();
                     const { outcome } = await deferredPrompt.userChoice;
                     if (outcome === 'accepted') {
-                        console.log('Kullanıcı PWA kurulumunu kabul etti');
+                        console.log('Kullanıcı PWA kurulumunu kabul etti.');
                         banner.classList.add('hidden');
                         localStorage.setItem('pwa_banner_closed', 'true');
                     } else {
-                        console.log('Kullanıcı PWA kurulumunu reddetti');
+                        console.log('Kullanıcı PWA kurulumunu reddetti.');
                     }
                     deferredPrompt = null;
                 } else {
-                    alert('Tarayıcınız PWA kurulumunu desteklemiyor. Sayfayı yer imlerine ekleyerek veya "Uygulamaya Git" butonunu kullanarak devam edebilirsiniz.');
+                    // Eğer beforeinstallprompt tetiklenmediyse (ör. masaüstü veya destek yoksa)
+                    // doğrudan hedef URL'ye yönlendir
                     window.location.href = 'https://lojilingo-472717011839.europe-west2.run.app/?source=pwa';
                 }
             });
 
+            // Kapat butonuna tıklama
             closeBtn.addEventListener('click', () => {
                 banner.classList.add('hidden');
                 localStorage.setItem('pwa_banner_closed', 'true');
             });
 
-            if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+            // Eğer kullanıcı banner'ı kapattıysa tekrar gösterme
+            if (localStorage.getItem('pwa_banner_closed') === 'true') {
                 banner.classList.add('hidden');
             }
         })();
